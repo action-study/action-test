@@ -9,11 +9,17 @@ on:
 # 워크플로우 실행될 작업 정의.
 jobs:
   check_pr_title:
-    runs-on: [ubuntu-latest]
+    runs-on: ubuntu-latest
     steps:
       - name: Call 'Check PR Title' Action
-        run: |
-          if [[ ${{ github.event.pull_request.title }} =~ /^(🚧 ?)?(lang|release|build|ci|docs|feat|fix|perf|refactor|style|test|chore)(\([^)]+\))?:.+/ ]]; then
-              echo "PR 제목이 컨벤션에 맞지 않는 것 같습니다."
-              exit 1
-          fi
+        id: pr_title_check
+        # GitHub Script 액션. JavaScript를 실행하여 PR 제목을 검증.
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const pattern = /^(🚧 ?)?(lang|release|build|ci|docs|feat|fix|perf|refactor|style|test|chore)(\([^)]+\))?:.+/;
+            const title = context.payload.pull_request.title;
+
+            if (!pattern.test(title)) {
+              core.setFailed('PR 제목이 컨벤션에 맞지 않습니다.');
+            }
