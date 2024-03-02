@@ -1,0 +1,17 @@
+# 워크플로우 이름 정의.
+name: Check PR Title
+
+# 워크플로우가 실행될 조건 정의.
+on:
+  pull_request:
+    types: [opened, reopened, edited, ready_for_review]
+
+# 워크플로우 실행될 작업 정의.
+jobs:
+  check_pr_title:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Call 'Check PR Title' Action
+        runs: echo "Check PR Title Action 1"
+      - name: Call 'Check PR Title' Action
+        runs: echo "Check PR Title Action 2"
