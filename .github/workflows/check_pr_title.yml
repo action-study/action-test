@@ -14,12 +14,12 @@ jobs:
       - name: Call 'Check PR Title' Action
         id: pr_title_check
         # GitHub Script 액션. JavaScript를 실행하여 PR 제목을 검증.
-        uses: actions/github-script@v5
+        uses: actions/github-script@v7
         with:
           script: |
-            const pattern = /^(🚧 ?)?(lang|release|build|ci|docs|feat|fix|perf|refactor|style|test|chore)(\([^)]+\))?:.+/;
-            const title = context.payload.pull_request.title;
+            const pattern = /^(|docs|feat|fix|refactor|style|test|chore)(\([^)]+\))?:.+/
+            const title = context.payload.pull_request.title
 
             if (!pattern.test(title)) {
-              core.setFailed('PR 제목이 컨벤션에 맞지 않습니다.');
+              core.setFailed('PR 제목이 컨벤션에 맞지 않습니다.')
             }
