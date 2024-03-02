@@ -12,6 +12,6 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
       - name: Call 'Check PR Title' Action
-        runs: echo "Check PR Title Action 1"
+        run: echo "Check PR Title Action 1"
       - name: Call 'Check PR Title' Action
-        runs: echo "Check PR Title Action 2"
+        run: echo "Check PR Title Action 2"
