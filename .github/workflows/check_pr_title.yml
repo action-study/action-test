@@ -12,6 +12,8 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
       - name: Call 'Check PR Title' Action
-        run: echo "Check PR Title Action 1"
-      - name: Call 'Check PR Title' Action
-        run: echo "Check PR Title Action 2"
+        run: |
+          if [[ ${{ github.event.pull_request.title }} =~ /^(🚧 ?)?(lang|release|build|ci|docs|feat|fix|perf|refactor|style|test|chore)(\([^)]+\))?:.+/ ]]; then
+              echo "PR 제목이 컨벤션에 맞지 않는 것 같습니다."
+              exit 1
+          fi
