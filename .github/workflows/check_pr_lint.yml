@@ -11,6 +11,30 @@ jobs:
   check_pr_title:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.18.2
+          # npm 캐싱
+          cache: npm
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Call 'Check PR Lint' Action
-        id: pr_lint_check
-        run: npm run lint
+        run: |
+          npm ci
+          npm run lint
+      - name: Lint Failed
+        # 이전 step 에서 fail 이 발생하면 동작
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          # 권한이 없는 저장소나 API에 엑세스해야 하는 경우 인증을 위해 GITHUB_TOKEN을 입력으로 전달한다.
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          # PR에 코멘트 생성
+          script: |
+            github.rest.issues.createComment({
+              repo: context.repo.repo,
+              owner: context.repo.owner,
+              issue_number: context.issue.number,
+              body: ':exclamation: lint 오류가 발생했습니다.'
+            })
