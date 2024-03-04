@@ -26,7 +26,7 @@ jobs:
       - name: Lint Failed
         # 이전 step 에서 fail 이 발생하면 동작
         if: failure()
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           # 권한이 없는 저장소나 API에 엑세스해야 하는 경우 인증을 위해 GITHUB_TOKEN을 입력으로 전달한다.
           github-token: ${{secrets.GITHUB_TOKEN}}
