@@ -1,0 +1,35 @@
+# 워크플로우 이름 정의.
+name: Unit Test
+
+# 워크플로우 실행 조건 정의.
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        users: actions/checkout@v4
+      - name: Setup Node
+        users: actions/setup-node@v4
+        with:
+          node-version: 18.18.2
+          # npm 캐싱
+          cache: npm
+      - name: Run Test
+        run: |
+          npm ci
+          npm test
+      - name: TestFailed
+        # 이전 step 에서 fail 이 발생하면 동작
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        # PR에 코멘트 생성
+        script: |
+          github.rest.issues.createComment({
+            repo: context.repo.repo,
+            owner: context.repo.owner,
+            issue_number: context.issue.number,
+            body: ':exclamation: 통과하지 못한 테스트 케이스가 있습니다.'
+          })

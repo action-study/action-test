@@ -1,7 +1,7 @@
 # 워크플로우 이름 정의.
 name: Check PR Lint
 
-# 워크플로우가 실행될 조건 정의.
+# 워크플로우 실행 조건 정의.
 on:
   pull_request:
     types: [opened, synchronize]
