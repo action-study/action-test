@@ -1,6 +1,8 @@
 module.exports = {
   plugins: [
     'react',
+    'jest',
+    '@babel',
   ],
   globals: {
     document: false,
