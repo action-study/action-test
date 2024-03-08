@@ -8,7 +8,7 @@ on:
 
 # 워크플로우 실행될 작업 정의.
 jobs:
-  check_pr_title:
+  check_pr_lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

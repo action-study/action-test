@@ -1,0 +1,7 @@
+{
+  "presets": [
+    "@babel/preset-env",
+    // jest 에서 React 를 읽지 못하는 문제
+    ["@babel/preset-react", { "runtime": "automatic" }]
+  ]
+}

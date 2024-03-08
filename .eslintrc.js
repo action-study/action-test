@@ -1,9 +1,15 @@
 module.exports = {
+  env: {
+    jest: true,
+  },
   plugins: [
     'react',
+    'jest',
+    '@babel',
   ],
   globals: {
     document: false,
+    'jest/globals': true,
   },
   extends: [
     'plugin:react/recommended',
