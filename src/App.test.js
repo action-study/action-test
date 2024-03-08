@@ -11,7 +11,7 @@ describe('<App />', () => {
     render(<App />);
     screen.getByText('src/App.js');
     // ERROR!
-    screen.getByText('Learn React!');
-    // screen.getByText('Learn React!!');
+    // screen.getByText('Learn React!');
+    screen.getByText('Learn React!!');
   });
 });
