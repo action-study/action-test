@@ -12,5 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Call 'Check PR Title' Action
-        id: pr_title_check
         uses: action-study/github-actions/check_pr_title@main
+        with:
+          pullRequest: |
+            ${{
+              format(
+                '{{ "title": {0} }}',
+                toJSON(github.event.pull_request.title)
+              )
+            }}
