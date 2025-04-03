@@ -28,7 +28,7 @@ jobs:
           
       - name: Save Code Linting Results
         run: |
-          echo "Base branch is ${{ github.base_ref }}
+          echo "Base branch is ${{ github.base_ref }}"
           npx eslint $(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }} | grep -E '^src/.*\.(js|ts|vue)$')
         continue-on-error: true
 
