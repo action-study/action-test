@@ -4,7 +4,7 @@ name: Check PR Lint
 # 워크플로우 실행 조건 정의.
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [ opened, reopen, synchronize ]
 
 # 워크플로우 실행될 작업 정의.
 jobs:
@@ -13,28 +13,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18.18.2
-          # npm 캐싱
-          cache: npm
-      - name: Call 'Check PR Lint' Action
-        run: |
-          npm ci
-          npm run lint
-      - name: Lint Failed
-        # 이전 step 에서 fail 이 발생하면 동작
-        if: failure()
-        uses: actions/github-script@v7
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint Diff
+        run: npm run lint
+        continue-on-error: true
+          
+      - name: Save Code Linting Results
+        run: npm run lint:report
+        continue-on-error: true
+
+      - name: Annotate Code Linting Results
+        uses: ataylorme/eslint-annotate-action@v3
         with:
-          # 권한이 없는 저장소나 API에 엑세스해야 하는 경우 인증을 위해 GITHUB_TOKEN을 입력으로 전달한다.
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          # PR에 코멘트 생성
-          script: |
-            github.rest.issues.createComment({
-              repo: context.repo.repo,
-              owner: context.repo.owner,
-              issue_number: context.issue.number,
-              body: ':exclamation: lint 오류가 발생했습니다.'
-            })
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          report-json: lint_report.json
