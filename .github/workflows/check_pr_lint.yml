@@ -27,14 +27,14 @@ jobs:
       - name: Run ESLint Diff
         id: lint
         run: |
+          git fetch origin $BASE_BRANCH:refs/remotes/origin/${{ env.BASE_BRANCH }}
+          echo "Base branch is ${{ env.BASE_BRANCH }}
           npx eslint $(git diff --name-only --diff-filter=ACMR origin/${{ env.BASE_BRANCH }} | grep -E '^src/.*\.(js|ts|vue)$')
         continue-on-error: true
           
       - name: Save Code Linting Results
         if: steps.lint.outcome == 'failure'
         run: |
-          git fetch origin $BASE_BRANCH:refs/remotes/origin/${{ env.BASE_BRANCH }}
-          echo "Base branch is ${{ env.BASE_BRANCH }}
           npx eslint --output-file lint_report.json --format json $(git diff --name-only --diff-filter=ACMR origin/${{ env.BASE_BRANCH }} | grep -E '^src/.*\.(js|ts|vue)$')
         continue-on-error: true
 
