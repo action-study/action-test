@@ -18,7 +18,7 @@
     "eject": "react-scripts eject",
     "lint": "npx eslint ./src",
 		"lint-diff": "npx eslint $(git diff --name-only --diff-filter=ACMR HEAD | grep -E '^src/.*\\.(js|ts|vue)$')",
-    "lint:report": "npx eslint --output-file lint_report.json --format json $(git diff --name-only --diff-filter=ACMR HEAD | grep -E '^src/.*\\.(js|ts|vue)$')"
+    "lint:report": "npx eslint --output-file lint_report.json --format json src"
   },
   "eslintConfig": {
     "extends": [

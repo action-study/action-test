@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint Diff
-        run: npm run lint-diff
+        run: npm run lint
         continue-on-error: true
           
       - name: Save Code Linting Results
