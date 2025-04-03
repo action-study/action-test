@@ -31,7 +31,7 @@ jobs:
           BASE_BRANCH="${{ github.base_ref }}"
           git fetch origin $BASE_BRANCH:refs/remotes/origin/$BASE_BRANCH
           echo "Base branch is $BASE_BRANCH"
-          npx eslint $(git diff --name-only --diff-filter=ACMR origin/$BASE_BRANCH | grep -E '^src/.*\.(js|ts|vue)$')
+          npx eslint --output-file lint_report.json --format json $(git diff --name-only --diff-filter=ACMR origin/$BASE_BRANCH | grep -E '^src/.*\.(js|ts|vue)$')
         continue-on-error: true
 
       - name: Annotate Code Linting Results
