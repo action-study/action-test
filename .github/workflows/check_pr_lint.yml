@@ -28,6 +28,7 @@ jobs:
           
       - name: Save Code Linting Results
         run: npm run lint:report
+        continue-on-error: true
 
       - name: Annotate Code Linting Results
         uses: ataylorme/eslint-annotate-action@v3
