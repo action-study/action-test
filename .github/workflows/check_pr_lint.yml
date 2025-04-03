@@ -26,14 +26,11 @@ jobs:
         run: npm run lint-diff
         continue-on-error: true
           
-      - name: Lint Failed
-        # 이전 step 에서 fail 이 발생하면 동작
-        if: failure()
+      - name: Save Code Linting Results
         run: npm run lint:report
 
       - name: Annotate Code Linting Results
-        if: failure()
         uses: ataylorme/eslint-annotate-action@v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          report-json: lint-report.json
+          report-json: lint_report.json
