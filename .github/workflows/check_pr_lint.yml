@@ -22,9 +22,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run ESLint Diff
-        run: npm run lint
-        continue-on-error: true
+      # - name: Run ESLint Diff
+      #   run: npm run lint:diff
+      #   continue-on-error: true
           
       - name: Save Code Linting Results
         run: npm run lint:report
