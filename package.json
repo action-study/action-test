@@ -16,7 +16,8 @@
     "build": "react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject",
-    "lint": "npx eslint ."
+    "lint": "npx eslint ./src",
+    "lint-diff": "npx eslint $(git diff --name-only --diff-filter=duxb origin/$BASE origin/$HEAD | grep -E '\\.((vue)(js)(ts)?)$' | xargs)"
   },
   "eslintConfig": {
     "extends": [
