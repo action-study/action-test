@@ -27,7 +27,7 @@ jobs:
       - name: Fetch Base Branch
         run: |
           git fetch origin ${{ env.BASE_BRANCH }}:refs/remotes/origin/${{ env.BASE_BRANCH }}
-          echo "Base branch is ${{ env.BASE_BRANCH }}
+          echo "Base branch is ${{ env.BASE_BRANCH }}"
 
       - name: Run ESLint Diff
         id: lint
