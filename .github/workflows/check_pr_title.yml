@@ -4,7 +4,7 @@ name: Check PR Title
 # 워크플로우 실행 조건 정의.
 on:
   pull_request:
-    types: [opened, reopened, edited, ready_for_review]
+    types: [ opened, reopened, edited, ready_for_review ]
 
 # 워크플로우 실행될 작업 정의.
 jobs:
@@ -15,9 +15,4 @@ jobs:
         uses: action-study/github-actions/check_pr_title@main
         with:
           pullRequest: |
-            ${{
-              format(
-                '{{ "title": {0} }}',
-                toJSON(github.event.pull_request.title)
-              )
-            }}
+            ${{ format('{{ "title": {0} }}', toJSON(github.event.pull_request.title)) }}

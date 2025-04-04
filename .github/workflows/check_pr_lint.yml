@@ -24,11 +24,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Fetch Base Branch
+        run: |
+          git fetch origin ${{ env.BASE_BRANCH }}:refs/remotes/origin/${{ env.BASE_BRANCH }}
+          echo "Base branch is ${{ env.BASE_BRANCH }}
+
       - name: Run ESLint Diff
         id: lint
         run: |
-          git fetch origin $BASE_BRANCH:refs/remotes/origin/${{ env.BASE_BRANCH }}
-          echo "Base branch is ${{ env.BASE_BRANCH }}
           npx eslint $(git diff --name-only --diff-filter=ACMR origin/${{ env.BASE_BRANCH }} | grep -E '^src/.*\.(js|ts|vue)$')
         continue-on-error: true
           
@@ -44,3 +47,9 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           report-json: lint_report.json
+
+      # - name: Notify Slack
+      #   if: stpes.lint.outcome == 'failure'
+      #   uses: 
+      #   with: 
+
