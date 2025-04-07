@@ -14,7 +14,7 @@ jobs:
       - name: Call 'Check PR Lint' Action
         uses: action-study/github-actions/check_pr_lint@feat/check_pr_lint
         with:
-          privateKey: ${{ secrets.PRIVATE_KEY }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
           filePattern: ^src/.*\.(js|ts|vue)$
           baseName: ${{ github.base_ref }}
           pullRequest: |
