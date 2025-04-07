@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Call 'Check PR Lint' Action
-        uses: action-study/github-actions/check_pr_title@feat/check_pr_lint
+        uses: action-study/github-actions/check_pr_lint@feat/check_pr_lint
         with:
           privateKey: ${{ secrets.PRIVATE_KEY }}
           filePattern: ^src/.*\.(js|ts|vue)$
