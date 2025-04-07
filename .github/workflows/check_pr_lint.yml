@@ -10,46 +10,64 @@ on:
 jobs:
   check_pr_lint:
     runs-on: ubuntu-latest
-    env:
-      BASE_BRANCH: ${{ github.base_ref }}
+    # env:
+    #   BASE_BRANCH: ${{ github.base_ref }}
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Call 'Check PR Lint' Action
+        uses: action-study/github-actions/check_pr_title@feat/check_pr_lint
         with:
-          node-version: 18.18.2
+          appId: ${{ secrets.APP_ID }}
+          installationId: ${{ secrets.INSTALLATION_ID }}
+          baseRef: ${{ github.base_ref }}
+          pullRequest: |
+            ${{ 
+              format(
+                '{{ "user": {0}, "title": {1}, "url": {2} }}',
+                toJSON(github.event.pull_request.user),
+                toJSON(github.event.pull_request.title),
+                toJSON(github.event.pull_request.html_url),
+              )
+            }}
 
-      - name: Install dependencies
-        run: npm ci
+    # steps:
+    #   - name: Checkout
+    #     uses: actions/checkout@v4
 
-      - name: Fetch Base Branch
-        run: |
-          git fetch origin ${{ env.BASE_BRANCH }}:refs/remotes/origin/${{ env.BASE_BRANCH }}
-          echo "Base branch is ${{ env.BASE_BRANCH }}"
+    #   - name: Setup Node
+    #     uses: actions/setup-node@v4
+    #     with:
+    #       node-version: 18.18.2
 
-      - name: Run ESLint Diff
-        id: lint
-        run: |
-          npx eslint $(git diff --name-only --diff-filter=ACMR origin/${{ env.BASE_BRANCH }} | grep -E '^src/.*\.(js|ts|vue)$')
-        continue-on-error: true
+    #   - name: Install dependencies
+    #     run: npm ci
+
+    #   - name: Fetch Base Branch
+    #     run: |
+    #       git fetch origin ${{ env.BASE_BRANCH }}:refs/remotes/origin/${{ env.BASE_BRANCH }}
+    #       echo "Base branch is ${{ env.BASE_BRANCH }}"
+
+    #   - name: Run ESLint Diff
+    #     id: lint
+    #     run: |
+    #       npx eslint $(git diff --name-only --diff-filter=ACMR origin/${{ env.BASE_BRANCH }} | grep -E '^src/.*\.(js|ts|vue)$')
+    #     continue-on-error: true
           
-      - name: Save Code Linting Results
-        if: steps.lint.outcome == 'failure'
-        run: |
-          npx eslint --output-file lint_report.json --format json $(git diff --name-only --diff-filter=ACMR origin/${{ env.BASE_BRANCH }} | grep -E '^src/.*\.(js|ts|vue)$')
-        continue-on-error: true
+    #   - name: Save Code Linting Results
+    #     if: steps.lint.outcome == 'failure'
+    #     run: |
+    #       npx eslint --output-file lint_report.json --format json $(git diff --name-only --diff-filter=ACMR origin/${{ env.BASE_BRANCH }} | grep -E '^src/.*\.(js|ts|vue)$')
+    #     continue-on-error: true
 
-      - name: Annotate Code Linting Results
-        if: steps.lint.outcome == 'failure'
-        uses: ataylorme/eslint-annotate-action@v3
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          report-json: lint_report.json
+    #   - name: Annotate Code Linting Results
+    #     if: steps.lint.outcome == 'failure'
+    #     uses: ataylorme/eslint-annotate-action@v3
+    #     with:
+    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #       report-json: lint_report.json
 
-      # - name: Notify Slack
-      #   if: stpes.lint.outcome == 'failure'
-      #   uses: 
-      #   with: 
+    #   # - name: Notify Slack
+    #   #   if: stpes.lint.outcome == 'failure'
+    #   #   uses: 
+    #   #   with: 
 
