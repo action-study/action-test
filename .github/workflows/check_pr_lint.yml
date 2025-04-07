@@ -21,12 +21,12 @@ jobs:
           installationId: ${{ secrets.INSTALLATION_ID }}
           baseRef: ${{ github.base_ref }}
           pullRequest: |
-            ${{ 
+            ${{
               format(
                 '{{ "user": {0}, "title": {1}, "url": {2} }}',
                 toJSON(github.event.pull_request.user),
                 toJSON(github.event.pull_request.title),
-                toJSON(github.event.pull_request.html_url),
+                toJSON(github.event.pull_request.html_url)
               )
             }}
 
