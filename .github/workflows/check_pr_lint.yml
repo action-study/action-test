@@ -16,6 +16,7 @@ jobs:
         with:
           privateKey: ${{ secrets.PRIVATE_KEY }}
           filePattern: ^src/.*\.(js|ts|vue)$
+          baseName: ${{ github.base_ref }}
           pullRequest: |
             ${{
               format(
