@@ -1,68 +1,80 @@
-# 워크플로우 이름 정의.
 name: Check PR Lint
 
-# 워크플로우 실행 조건 정의.
 on:
   pull_request:
-    types: [ opened, reopen, synchronize ]
+    types: [ opened, reopen, synchronize, ready_for_review ]
 
-# 워크플로우 실행될 작업 정의.
 jobs:
   check_pr_lint:
-    runs-on: ubuntu-latest
+    name: Check PR Lint
+    runs-on: [ubuntu-latest]
     steps:
-      - name: Call 'Check PR Lint' Action
-        uses: action-study/github-actions/check_pr_lint@feat/check_pr_lint
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Fetch PR Base
+        run: |
+          git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
+          echo "Base branch is ${{ github.base_ref }}"
+
+      - name: Get Changed Files
+        run: |
+          CHANGED_FILES=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }} | grep -E "^src/.*\.(js|ts|vue)$" || echo "")
+          echo "Changed files are: $CHANGED_FILES"
+          echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+
+      - name: Run ESLint
+        id: lint
+        if: env.CHANGED_FILES != ''
+        shell: bash
+        run: |
+          npx eslint ${{ $CHANGED_FILES }}
+        continue-on-error: true
+
+      - name: Save ESLint Results
+        if: steps.lint.outcome == 'failure' && env.CHANGED_FILES != ''
+        shell: bash
+        run: |
+          npx eslint --output-file lint_report.json --format json ${{ $CHANGED_FILES }}
+
+      - name: Annotate ESLint Results
+        if: steps.lint.outcome == 'failure' && env.CHANGED_FILES != ''
+        uses: ataylorme/eslint-annotate-action@v3
         with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          filePattern: ^src/.*\.(js|ts|vue)$
-          baseName: ${{ github.base_ref }}
-          pullRequest: |
-            ${{
-              format(
-                '{{ "baseName": {0}, "title": {1}, "url": {2} }}',
-                toJSON(github.base_ref),
-                toJSON(github.event.pull_request.title),
-                toJSON(github.event.pull_request.html_url)
-              )
-            }}
-      # - name: Checkout
-      #   uses: actions/checkout@v4
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          report-json: lint_report.json
 
-      # - name: Setup Node
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 18.18.2
+      - name: Comment on PR
+        if: steps.lint.outcome == 'failure' && env.CHANGED_FILES != ''
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              repo: context.repo.repo,
+              owner: context.repo.owner,
+              issue_number: context.issue.number,
+              body: ':warning: ESLint 오류가 발생했습니다.',
+            })
 
-      # - name: Install dependencies
-      #   run: npm ci
-
-      # - name: Fetch Base Branch
-      #   run: |
-      #     git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
-      #     echo "Base branch is ${{ github.base_ref }}"
-
-      # - name: Run ESLint Diff
-      #   id: lint
-      #   run: |
-      #     npx eslint $(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }} | grep -E '^src/.*\.(js|ts|vue)$')
-      #   continue-on-error: true
-          
-      # - name: Save Code Linting Results
-      #   if: steps.lint.outcome == 'failure'
-      #   run: |
-      #     npx eslint --output-file lint_report.json --format json $(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }} | grep -E '^src/.*\.(js|ts|vue)$')
-      #   continue-on-error: true
-
-      # - name: Annotate Code Linting Results
-      #   if: steps.lint.outcome == 'failure'
-      #   uses: ataylorme/eslint-annotate-action@v3
-      #   with:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     report-json: lint_report.json
-
-    #   # - name: Notify Slack
-    #   #   if: stpes.lint.outcome == 'failure'
-    #   #   uses: 
-    #   #   with: 
-
+  # check_pr_lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Call 'Check PR Lint' Action
+  #       uses: action-study/github-actions/check_pr_lint@feat/check_pr_lint
+  #       with:
+  #         githubToken: ${{ secrets.GITHUB_TOKEN }}
+  #         filePattern: ^src/.*\.(js|ts|vue)$
+  #         baseName: ${{ github.base_ref }}
+  #         pullRequest: |
+  #           ${{
+  #             format(
+  #               '{{ "baseName": {0}, "title": {1}, "url": {2} }}',
+  #               toJSON(github.base_ref),
+  #               toJSON(github.event.pull_request.title),
+  #               toJSON(github.event.pull_request.html_url)
+  #             )
+  #           }}
