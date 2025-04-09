@@ -11,13 +11,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Dependencies
         run: npm i
 
       - name: Fetch PR Base
         run: |
-          git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
+          git fetch --no-tags  origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
           echo "Base branch is ${{ github.base_ref }}"
 
       - name: Get Changed Files
