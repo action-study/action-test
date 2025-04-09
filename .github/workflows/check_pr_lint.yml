@@ -25,20 +25,22 @@ jobs:
           CHANGED_FILES=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }} | grep -E "^src/.*\.(js|ts|vue)$" || echo "none")
           echo "Changed files are: $CHANGED_FILES"
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
+          cat $GITHUB_ENV
 
       - name: Run ESLint
         id: lint
         if: ${{ env.CHANGED_FILES }} != 'none'
         shell: bash
         run: |
-          npx eslint ${{ $CHANGED_FILES }}
+          echo "Running ESLint on files: ${{ env.CHANGED_FILES }}"
+          npx eslint ${{ env.CHANGED_FILES }}
         continue-on-error: true
 
       - name: Save ESLint Results
         if: steps.lint.outcome == 'failure' && ${{ env.CHANGED_FILES }} != 'none'
         shell: bash
         run: |
-          npx eslint --output-file lint_report.json --format json ${{ $CHANGED_FILES }}
+          npx eslint --output-file lint_report.json --format json ${{ env.CHANGED_FILES }}
 
       - name: Annotate ESLint Results
         if: steps.lint.outcome == 'failure' && ${{ env.CHANGED_FILES }} != 'none'
