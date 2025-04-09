@@ -26,24 +26,22 @@ jobs:
           CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ')
           echo "Changed files are: $CHANGED_FILES"
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
-          cat $GITHUB_ENV
 
       - name: Run ESLint
         id: lint
         if: ${{ env.CHANGED_FILES }} != ''
         run: |
-          echo "Running ESLint on files: ${{ env.CHANGED_FILES }}"
           npx eslint ${{ env.CHANGED_FILES }}
         continue-on-error: true
 
       - name: Save ESLint Results
-        if: steps.lint.outcome == 'failure' && ${{ env.CHANGED_FILES }} != ''
+        if: steps.lint.outcome == 'failure'
         run: |
           npx eslint --output-file lint_report.json --format json ${{ env.CHANGED_FILES }}
         continue-on-error: true
 
       - name: Annotate ESLint Results
-        if: steps.lint.outcome == 'failure' && ${{ env.CHANGED_FILES }} != ''
+        if: steps.lint.outcome == 'failure'
         uses: ataylorme/eslint-annotate-action@v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,7 +49,7 @@ jobs:
         continue-on-error: true
 
       - name: Comment on PR
-        if: steps.lint.outcome == 'failure' && ${{ env.CHANGED_FILES }} != ''
+        if: steps.lint.outcome == 'failure'
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
