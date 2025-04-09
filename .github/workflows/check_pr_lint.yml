@@ -31,7 +31,6 @@ jobs:
       - name: Run ESLint
         id: lint
         if: ${{ env.CHANGED_FILES }} != 'none'
-        shell: bash
         run: |
           echo "Running ESLint on files: ${{ env.CHANGED_FILES }}"
           npx eslint ${{ env.CHANGED_FILES }}
@@ -39,9 +38,9 @@ jobs:
 
       - name: Save ESLint Results
         if: steps.lint.outcome == 'failure' && ${{ env.CHANGED_FILES }} != 'none'
-        shell: bash
         run: |
           npx eslint --output-file lint_report.json --format json ${{ env.CHANGED_FILES }}
+        continue-on-error: true
 
       - name: Annotate ESLint Results
         if: steps.lint.outcome == 'failure' && ${{ env.CHANGED_FILES }} != 'none'
@@ -49,6 +48,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           report-json: lint_report.json
+        continue-on-error: true
 
       - name: Comment on PR
         if: steps.lint.outcome == 'failure' && ${{ env.CHANGED_FILES }} != 'none'
