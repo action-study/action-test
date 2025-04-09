@@ -23,6 +23,7 @@ jobs:
       - name: Get Changed Files
         run: |
           CHANGED_FILES=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }} | grep -E "^src/.*\.(js|ts|vue)$" || echo "none")
+          CHANGED_FILES=$(echo "$CHANGED_FILES" | tr '\n' ' ')
           echo "Changed files are: $CHANGED_FILES"
           echo "CHANGED_FILES=$CHANGED_FILES" >> $GITHUB_ENV
           cat $GITHUB_ENV
